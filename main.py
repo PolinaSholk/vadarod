@@ -13,33 +13,31 @@
 min_notes
 1.
 '''
-from itertools import count
 import unittest
+
 from openpyxl import load_workbook
 
 
 def min_notes(nom, residue, a_sum, max_b):
     count = 0
-    residue_cop = residue.copy()
-    if (a_sum == 0) and (count == 0):
+    if not a_sum:
         return 0, residue
     for inx, i in enumerate(nom):
-        while (residue[i] > 0) and (a_sum > 0):
+        while residue[i] > 0 and a_sum > 0:
             a_sum -= i
             count += 1
             residue[i] -= 1
-            # print(residue_cop)
         if a_sum < 0:
             a_sum += i
             count -= 1
             residue[i] += 1
             continue
-        elif (a_sum == 0) and (count < max_b):
+        elif a_sum == 0 and count < max_b:
             return count
-        elif (a_sum == 0) and (count >= max_b):
+        elif a_sum == 0 and count >= max_b:
             return 'no'
 
-def result_nominal(true_ct, result, rem_b, summ = 0, max_b = 25):
+def result_nominal(true_ct, result, rem_b, summ=0, max_b=25):
     nominal_ct = max(true_ct, key=true_ct.get)
     summ -= nominal_ct
     count = min_notes(result, rem_b, summ, max_b)
@@ -50,48 +48,25 @@ def result_nominal(true_ct, result, rem_b, summ = 0, max_b = 25):
         nominal_ct, result = result_nominal(true_ct_copy, result, rem_b, summ, max_b)
     else:
         result[nominal_ct] += 1
+
     return nominal_ct, result
 
-def right_ct(ct, rem_b, summ = 0):
-    true_ct = dict()
-    for i in ct:
-         if i <= summ and not rem_b[i] == 0:
-             true_ct[i] = rem_b[i]
+def right_ct(ct, rem_b, summ=0):
+    true_ct = {i: rem_b[i] for i in ct if i <= summ and rem_b[i]}
     return true_ct
 
-def new_rem_b(rem_b, result):
-    for i in rem_b:
-        rem_b[i] -= result[i]
-    return rem_b
-
-def give_me_b():
-    pass
-
 def take_this_b(ct, rem_b, result, summ, max_b):
-    # # Максимум выдаваемых банкнот
-    # max_b = 25
-    # # Запрошенная сумма
-    # summ = 1600
-    # input(summ)
-    while not summ == 0:
+    while summ:
         true_ct = right_ct(ct, rem_b, summ)
         rem_b_copy = rem_b.copy()
         nominal_ct, result = result_nominal(true_ct, result, rem_b_copy, summ, max_b)
         max_b -= 1
         summ -= nominal_ct
         rem_b[nominal_ct] -= 1
-    # print(max_b)
-    # for inx, i in enumerate(rem_b_copy):
-    #     rem_b_copy[i] -= result[i]
+
     return rem_b, result
 
 def main(ct, rem_b, summ, max_b):
-    # Номинал
-    # ct = (100, 50, 10, 5)
-    # # Банкнот в кассетах
-    # rem_b = {100: 1000, 50: 1988, 10: 1985, 5: 1983}
-    # print(rem_b)
-    # Банкнот на выдачу
     result = {100: 0, 50: 0, 10: 0, 5: 0}
     rem_b, result = take_this_b(ct, rem_b, result, summ, max_b)
     # ch = -1

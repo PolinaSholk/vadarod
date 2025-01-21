@@ -35,11 +35,10 @@ def min_notes(nom, residue, a_sum, max_b):
         elif a_sum == 0 and count < max_b:
             return count
         elif a_sum == 0 and count >= max_b:
-            return None
+            return
 
 def result_nominal(true_ct, result, rem_b, summ=0, max_b=25):
-    sort = dict(sorted(true_ct.items(), key=lambda x: (x[1], x[0]), reverse=True))
-    sort_true_ct = dict(sort)
+    sort_true_ct = dict(sorted(true_ct.items(), key=lambda x: (x[1], x[0]), reverse=True))
     for ct, nominal_ct in enumerate(sort_true_ct):
         summ -= int(nominal_ct)
         count = min_notes(result, rem_b, summ, max_b)

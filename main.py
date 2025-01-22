@@ -35,21 +35,18 @@ def min_notes(nom, residue, a_sum, max_b):
         elif a_sum == 0 and count < max_b:
             return count
         elif a_sum == 0 and count >= max_b:
-            return 'no'
+            return
 
 def result_nominal(true_ct, result, rem_b, summ=0, max_b=25):
-    nominal_ct = max(true_ct, key=true_ct.get)
-    summ -= nominal_ct
-    count = min_notes(result, rem_b, summ, max_b)
-    if count == 'no':
-        true_ct_copy = true_ct.copy()
-        true_ct_copy.pop(nominal_ct)
-        summ += nominal_ct
-        nominal_ct, result = result_nominal(true_ct_copy, result, rem_b, summ, max_b)
-    else:
-        result[nominal_ct] += 1
-
-    return nominal_ct, result
+    sort_true_ct = dict(sorted(true_ct.items(), key=lambda x: (x[1], x[0]), reverse=True))
+    for nominal_ct in sort_true_ct.keys():
+        summ -= int(nominal_ct)
+        count = min_notes(result, rem_b, summ, max_b)
+        if not count:
+            summ += int(nominal_ct)
+        else:
+            result[int(nominal_ct)] += 1
+            return int(nominal_ct), result
 
 def right_ct(ct, rem_b, summ=0):
     true_ct = {i: rem_b[i] for i in ct if i <= summ and rem_b[i]}
